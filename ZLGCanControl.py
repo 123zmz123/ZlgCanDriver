@@ -100,6 +100,7 @@ class CanBoardTypeDefines:
 
 
 
+
 class CanBaudrateDefines:
     def group1_baud_rate(self,baud_rate: int):
         if baud_rate == 1000:
@@ -265,13 +266,31 @@ class Communication():
             return True, CanBoardTypeDefines.VCI_USBCAN_2E_U, "ok"
         elif typename.lower() == "usb_can_2" or typename.lower() == "usb_can_ii":
             return True, CanBoardTypeDefines.VCI_USBCAN2, "ok"
+        elif typename.lower() == "pci_5010_u" or typename.lower() == "pci-5010-u":
+            return True, CanBoardTypeDefines.VCI_PCI5010U, "ok"
+        elif typename.lower() == "pci_5020_u" or typename.lower() == "pci-5020-u":
+            return True, CanBoardTypeDefines.VCI_PCI5020U, "ok"
+        elif typename.lower() == "usb_can_eu" or typename.lower() == "usb-can-eu":
+            return True, CanBoardTypeDefines.VCI_USBCAN_E_U, "ok"
+        elif typename.lower() == "usb_can_4eu" or typename.lower() == "usb-can-4eu":
+            return True, CanBoardTypeDefines.VCI_USBCAN_E_U, "ok"
+        elif typename.lower() == "pci_5121" or typename.lower() == "pci-5121":
+            return True, CanBoardTypeDefines.VCI_PCI5121, "ok"
+        elif typename.lower() == "pci_9810i" or typename.lower() == "pci-9810i":
+            return True, CanBoardTypeDefines.VCI_PCI9810, "ok"
+        elif typename.lower() == "pci_9820" or typename.lower() == "pci-9820":
+            return True, CanBoardTypeDefines.VCI_PCI9820, "ok"
+        elif typename.lower() == "can_232" or typename.lower() == "can232":
+            return True, CanBoardTypeDefines.VCI_CAN232, "ok"
+        elif typename.lower() == "pci_5110" or typename.lower() == "pci5110":
+            return True, CanBoardTypeDefines.VCI_PCI5110, "ok"
+        elif typename.lower() == "candtu":
+            return True, CanBoardTypeDefines.VCI_CANDTU_MINI, "ok"
         else:
             return False, 0, "InputType is not satisfied! At GetCANBoardConfigurtaion Function"
 
     def set_can_board_configuration(self, can_type: str, can_idx: int, chn: int, baud_rate: int):
         try:
-
-
             if type(can_type) != str or type(chn) != int or type(baud_rate) != int:
                 return False, self._error_msg(" InputType is not satisfied! At GetCANBoardConfigurtaion Function")
 
