@@ -470,7 +470,7 @@ class Communication():
                             if j == self._MessageName.ReturnConstantMessage.value:
                                 print("收到保持通讯消息")
 
-    def PrintReceiveData(self):
+    def _PrintReceiveData(self):
         RecvSize = dll.VCI_GetReceiveNum(self.CanType, self.CanIndex, self.Chn)
         respond = dll.VCI_Receive(self.CanType, self.CanIndex, self.Chn, byref(self.ReceiveBuffer), RecvSize, 10)
         if respond == 0xFFFFFFFF:
@@ -487,6 +487,10 @@ class Communication():
                       hex(self.ReceiveBuffer[i].Data[5]),
                       hex(self.ReceiveBuffer[i].Data[6]),
                       hex(self.ReceiveBuffer[i].Data[7]))
+    def PrintReciveData(self):
+        while True:
+            self._PrintReceiveData()
+            time.sleep(0.1)
     def ReceiveDataAndDecode(self):
         RecvSize = dll.VCI_GetReceiveNum(self.CanType, self.CanIndex, self.Chn)
         respond = dll.VCI_Receive(self.CanType, self.CanIndex, self.Chn, byref(self.ReceiveBuffer), RecvSize, 10)
@@ -508,7 +512,6 @@ class Communication():
             time.sleep(0.5)
             di = self.decode.get_decode_msg()
             print(di)
-            self.RefreshMsg.emit(di)
 
 
     def printx(self):
@@ -521,12 +524,18 @@ class Communication():
 
     def Close(self):
         dll.VCI_CloseDevice(self.CanType,0)
-    def Transmit(self, ID, data): #最基本的发送函数
+    def Transmit(self, ID, data,remote_flag=False,extern_flag = False,data_len = 8): #最基本的发送函数
         a = VCI_CAN_OBJ_SEND()
         a.ID = ID
-        a.DataLen = 8
+        a.DataLen = data_len
+        if remote_flag == True:
+            a.RemoteFlag = 1
+        if extern_flag == True:
+            a.ExternFlag = 1
         #a.Data = (c_ubyte*8)(0x02,0x01,0x01,0x01,0x01,0x01,0x01,0x01)
         a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
+        # a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
+        # a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
         res = dll.VCI_Transmit(self.CanType, self.CanIndex, self.Chn, pointer(a), 1)
 
         if res !=1:

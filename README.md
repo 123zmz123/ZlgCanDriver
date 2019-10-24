@@ -19,9 +19,19 @@ python3
         #打开CAN卡'
         c.open_new()
         
+        # 注意发送函数默认发送数据长度为8个字节
+        
         # 发送标准帧 id 为0x110
         data = [1,2,3,4,5,6,7,8]    
         c.Transmit(0x110,data)
+        
+        # 发送拓展帧
+        data = [1,2,3,4,5,6,7,8]    
+        c.Transmit(0x110,data,extern_flag = True)
+        
+        # 发送长度为9的帧 
+        data = [1,2,3,4,5,6,7,8，9]    
+        c.Transmit(0x110,data,data_len=9)
         
         # 新建线程，不断读取CAN卡上的报文并且打印出来
         cycle_read_thread = threading.Thread(target=c.PrintReceiveData)
