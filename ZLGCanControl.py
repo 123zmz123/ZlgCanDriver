@@ -532,8 +532,10 @@ class Communication():
             a.RemoteFlag = 1
         if extern_flag == True:
             a.ExternFlag = 1
+        if len(data)<8:
+            data+=(8-len(data))*[0]
         #a.Data = (c_ubyte*8)(0x02,0x01,0x01,0x01,0x01,0x01,0x01,0x01)
-        a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
+        a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7] )# 终于尼玛搞定了
         # a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
         # a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
         res = dll.VCI_Transmit(self.CanType, self.CanIndex, self.Chn, pointer(a), 1)
@@ -573,6 +575,13 @@ class HowToUse():
         for i in range(1000):
             time.sleep(5)
             c.Transmit(0x110,data)
+    def send_extend_frames(self):
+        c = Communication()
+        c.set_can_board_configuration(can_type="usb_can_2eu",can_idx=0,chn=0,baud_rate=500)
+        c.open_new()
+        data = [1,2,3,4,5,6]
+        for i in range(50):
+            c.Transmit(0x111,data,extern_flag=True,data_len=7)
     def close_it(self):
         c = Communication()
         c.set_can_board_configuration(can_type="usb_can_2eu",can_idx=0,chn=0,baud_rate=500)
@@ -593,8 +602,9 @@ class HowToUse():
 
 if __name__ == "__main__":
     i_will_help_you = HowToUse()
+    i_will_help_you.send_extend_frames()
     # i_will_help_you.open_it()
-    i_will_help_you.send_frames()
+    # i_will_help_you.send_frames()
     # i_will_help_you.close_it()
     # i_will_help_you.receive_with_thread()
 
