@@ -29,9 +29,10 @@ python3
         data = [1,2,3,4,5,6,7,8]    
         c.Transmit(0x110,data,extern_flag = True)
         
-        # 发送长度为9的帧 
-        data = [1,2,3,4,5,6,7,8，9]    
-        c.Transmit(0x110,data,data_len=9)
+        # 发送长度为6的帧 , 根据周立功官方手册，CAN帧最大发送数据长度为8，当然我对此表示怀疑，
+        # 但既然周立功所提供驱动貌似只能发送最大长度为8 byte的帧，因此，请保证数据长度不大于8即可。
+        data = [1,2,3,4,5,6]    
+        c.Transmit(0x110,data,data_len=6)
         
         # 新建线程，不断读取CAN卡上的报文并且打印出来
         cycle_read_thread = threading.Thread(target=c.PrintReceiveData)
