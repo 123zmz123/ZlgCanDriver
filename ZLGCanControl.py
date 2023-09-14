@@ -540,8 +540,11 @@ class Communication():
         a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7] )# 终于尼玛搞定了
         # a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
         # a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
-        res = dll.VCI_Transmit(self.CanType, self.CanIndex, self.Chn, pointer(a), 1)
-
+        res = 0
+        if self.config1.CanType != 0:
+            res = dll.VCI_Transmit(self.CanType, self.config1.CanIndex, self.config1.Chn, pointer(a), 1)
+        elif self.config2.CanType != 0:
+            res = dll.VCI_Transmit(self.CanType, self.config2.CanIndex, self.config2.Chn, pointer(a), 1)
         if res !=1:
             print("发送失败！")
     def TranExtentedSession(self): # 切换到扩展模式
