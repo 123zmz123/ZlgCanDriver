@@ -264,6 +264,8 @@ class Communication():
     def _trans_can_type(self, typename: str):
         if typename.lower() == "usb_can_2eu":  # 此处应当用 re 去解析
             return True, CanBoardTypeDefines.VCI_USBCAN_2E_U, "ok"
+        elif typename.lower() == "usb_can_1" or typename.lower() == "usb_can_i":
+            return True, CanBoardTypeDefines.VCI_USBCAN1, "ok"
         elif typename.lower() == "usb_can_2" or typename.lower() == "usb_can_ii":
             return True, CanBoardTypeDefines.VCI_USBCAN2, "ok"
         elif typename.lower() == "pci_5010_u" or typename.lower() == "pci-5010-u":
