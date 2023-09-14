@@ -264,6 +264,8 @@ class Communication():
     def _trans_can_type(self, typename: str):
         if typename.lower() == "usb_can_2eu":  # 此处应当用 re 去解析
             return True, CanBoardTypeDefines.VCI_USBCAN_2E_U, "ok"
+        elif typename.lower() == "usb_can_1" or typename.lower() == "usb_can_i":
+            return True, CanBoardTypeDefines.VCI_USBCAN1, "ok"
         elif typename.lower() == "usb_can_2" or typename.lower() == "usb_can_ii":
             return True, CanBoardTypeDefines.VCI_USBCAN2, "ok"
         elif typename.lower() == "pci_5010_u" or typename.lower() == "pci-5010-u":
@@ -414,7 +416,7 @@ class Communication():
 
             if self.config1.CanType != 0:
 
-                if dll.VCI_OpenDevice(self.config1.CanType, 0, 0) == 0:
+                if dll.VCI_OpenDevice(self.config1.CanType, self.config1.CanIndex, 0) == 0:
                     raise Exception("打开CAN卡失败，请检查设备索引和设备类型是否准确")
 
                 if dll.VCI_SetReference(self.config1.CanType, self.config1.CanIndex, self.config1.Chn, 0,
@@ -430,10 +432,10 @@ class Communication():
                     raise Exception("打开CAN卡失败")
 
             elif self.config2.CanType != 0:
-                if dll.VCI_OpenDevice(self.config2.CanType, 0, 0) == 0:
+                if dll.VCI_OpenDevice(self.config2.CanType, self.config2.CanIndex, 0) == 0:
                     raise Exception("打开CAN卡失败，请检查设备索引和设备类型是否准确")
 
-                if dll.VCI_InitCAN(self.config2.CanType,0,0, pointer(self.config2.init_config))== 0:
+                if dll.VCI_InitCAN(self.config2.CanType,self.config2.CanIndex,0, pointer(self.config2.init_config))== 0:
                     raise Exception("初始化CAN卡失败")
 
                 if dll.VCI_StartCAN(self.config2.CanType,self.config2.CanIndex, self.config2.Chn)==0:
@@ -538,8 +540,11 @@ class Communication():
         a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7] )# 终于尼玛搞定了
         # a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
         # a.Data = (c_ubyte*8)(data[0],data[1],data[2],data[3],data[4],data[5],data[6],data[7]) # 终于尼玛搞定了
-        res = dll.VCI_Transmit(self.CanType, self.CanIndex, self.Chn, pointer(a), 1)
-
+        res = 0
+        if self.config1.CanType != 0:
+            res = dll.VCI_Transmit(self.CanType, self.config1.CanIndex, self.config1.Chn, pointer(a), 1)
+        elif self.config2.CanType != 0:
+            res = dll.VCI_Transmit(self.CanType, self.config2.CanIndex, self.config2.Chn, pointer(a), 1)
         if res !=1:
             print("发送失败！")
     def TranExtentedSession(self): # 切换到扩展模式
